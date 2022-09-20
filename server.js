@@ -38,7 +38,7 @@ app.get('/users/login', (req, res)=> {
 });
 
 app.get('/dashboard', (req, res)=> {
-    res.render('dashboard', {user: req.user.name});
+    res.render('dashboard/', {user: req.user.name});
 });
 
 app.get('/users/logout', (req, res,next)=>{
@@ -111,10 +111,36 @@ app.post('/users/login', passport.authenticate('local', {
     failureRedirect: '/users/login',
     failureFlash: true
 }));
+
+
 // app.get('/users', (req, res)=>{
 //     pool.query(`Select * from users`, (err, result)=>{
 //         if(!err){
 //             res.send(result.rows);
+//         }
+//     });
+// })
+//
+// app.get('/users/:id', (req, res)=>{
+//     pool.query(`Select * from users where id=${req.params.id}`, (err, result)=>{
+//         if(!err){
+//             res.send(result.rows);
+//         }
+//     });
+// })
+
+// app.get('/events', (req, res)=>{
+//     pool.query(`Select * from events`, (err, result)=>{
+//         if(!err){
+//             res.send(result.rows);
+//         }
+//     });
+// })
+//
+// app.get('/events/:id', (req, res)=>{
+//     pool.query(`Select * from events where id=${req.params.id}`, (err, result)=>{
+//         if(!err){
+//             res.send(result.rows );
 //         }
 //     });
 // })
