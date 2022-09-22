@@ -38,7 +38,7 @@ app.get('/users/login', (req, res)=> {
 });
 
 app.get('/dashboard', (req, res)=> {
-    res.render('dashboard/', {user: req.user.name});
+    res.render('dashboard', {user: "ASDASD"});
 });
 
 app.get('/users/logout', (req, res,next)=>{
@@ -50,12 +50,12 @@ app.get('/users/logout', (req, res,next)=>{
 
 
 app.post('/users/register', async (req, res)=> {
-    let { name, email, password, password2 } = req.body;
-    console.log({name, email, password, password2});
+    let { email, password, password2, first_name, last_name, age  } = req.body;
+    console.log({email, password, password2, first_name, last_name, age});
 
     let errors = [];
 
-    if(!name || !email || !password || !password2){
+    if(!email || !password || !password2 || !first_name || !last_name || !age ){
         errors.push({ message: "Enter all fields"});
     }
     //more validators
@@ -68,7 +68,7 @@ app.post('/users/register', async (req, res)=> {
     }
 
     if (errors.length > 0) {
-        res.render("register", { errors, name, email, password, password2 });
+        res.render("register", { errors, email, password, password2, first_name, last_name, age });
     } else {
         let hashedPassword = await  bcrypt.hash(password, 10);
         console.log(hashedPassword);
@@ -87,10 +87,10 @@ app.post('/users/register', async (req, res)=> {
                     res.render('register', {errors });
                 }else {
                     pool.query(
-                        `INSERT INTO users (name, email, password)
-                        VALUES ($1, $2, $3)
+                        `INSERT INTO users (email, password, first_name, last_name, age)
+                        VALUES ($1, $2, $3, $4, $5)
                         RETURNING id, password`,
-                        [name, email, hashedPassword],
+                        [email, hashedPassword, first_name, last_name, age],
                         (err ,results) => {
                             if(err){
                                 throw err;
@@ -121,29 +121,52 @@ app.post('/users/login', passport.authenticate('local', {
 //     });
 // })
 //
-// app.get('/users/:id', (req, res)=>{
-//     pool.query(`Select * from users where id=${req.params.id}`, (err, result)=>{
-//         if(!err){
-//             res.send(result.rows);
-//         }
-//     });
-// })
+app.get('/users/:id', (req, res)=>{
+    pool.query(`Select * from users where id=${req.params.id}`, (err, result)=>{
+        if(!err){
+            res.send(result.rows);
+        }
+    });
+})
 
-// app.get('/events', (req, res)=>{
-//     pool.query(`Select * from events`, (err, result)=>{
-//         if(!err){
-//             res.send(result.rows);
-//         }
-//     });
-// })
-//
-// app.get('/events/:id', (req, res)=>{
-//     pool.query(`Select * from events where id=${req.params.id}`, (err, result)=>{
-//         if(!err){
-//             res.send(result.rows );
-//         }
-//     });
-// })
+app.get('/events', (req, res)=>{
+    pool.query(`Select creator_id, city, date_and_time from events where is_active = true`, (err, result)=>{
+        if(!err){
+            res.send(result.rows);
+        }
+    });
+})
+
+app.get('/events/:id', (req, res)=>{
+    pool.query(`Select * from events where id=${req.params.id}`, (err, result)=>{
+        if(!err){
+            res.send(result.rows );
+        }
+    });
+})
+
+app.put('/events/:id', (req, res)=>{
+    pool.query(`UPDATE EVENTS SET is_active = false where id=${req.params.id}`, (err, result)=>{
+        if(!err){
+            res.send(result.rows);
+        }
+    });
+})
+
+// app.post('/events/add', (req, res)=> {
+//     let {id, creator_id, city, gym_name, date_and_time, training_length, training_plans} = req.body;
+//     pool.query(
+//         `INSERT INTO events ( creator_id, city, gym_name, date_and_time, training_length, training_plans)
+//                         VALUES ($1, $2, $3, $4, $5, $6)`,
+//             [creator_id, city, gym_name, date_and_time, training_length, training_plans],
+//             (err, results) => {
+//                 if (err) {
+//                     console.log(err);
+//                     throw err;
+//                 }
+//                 console.log(results.rows);
+//             })
+//     })
 
 app.listen(PORT, ()=>{
     console.log(`server running port ${PORT}`);

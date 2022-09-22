@@ -16,9 +16,6 @@
 </ul>
 <form action="/users/register" method="POST">
     <div>
-        <input type="text" id="name" name="name" placeholder="Name" required />
-    </div>
-    <div>
         <input
                 type="email"
                 id="email"
@@ -45,6 +42,34 @@
                 required
         />
     </div>
+    <div>
+        <input
+                type="text"
+                id="first_name"
+                name="first_name"
+                placeholder="First name"
+                required
+        />
+    </div>
+    <div>
+        <input
+                type="text"
+                id="last_name"
+                name="last_name"
+                placeholder="Last name"
+                required
+        />
+    </div>
+    <div>
+        <input
+                type="number"
+                id="age"
+                name="age"
+                placeholder="Age"
+                required
+        />
+    </div>
+
     <div>
         <input type="submit" value="Register" />
     </div>
