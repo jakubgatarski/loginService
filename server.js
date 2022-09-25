@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
 const passport = require('passport');
+const body_parser = require('body-parser');
 
 
 const initializePassport = require('./passportConfig')
@@ -12,6 +13,13 @@ initializePassport(passport);
 
 const PORT = process.env.PORT || 4000;
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+app.use(body_parser.json())
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 
@@ -153,20 +161,26 @@ app.put('/events/:id', (req, res)=>{
     });
 })
 
-// app.post('/events/add', (req, res)=> {
-//     let {id, creator_id, city, gym_name, date_and_time, training_length, training_plans} = req.body;
-//     pool.query(
-//         `INSERT INTO events ( creator_id, city, gym_name, date_and_time, training_length, training_plans)
-//                         VALUES ($1, $2, $3, $4, $5, $6)`,
-//             [creator_id, city, gym_name, date_and_time, training_length, training_plans],
-//             (err, results) => {
-//                 if (err) {
-//                     console.log(err);
-//                     throw err;
-//                 }
-//                 console.log(results.rows);
-//             })
-//     })
+app.post('/events/add', (req, res)=> {
+    let {id, creator_id, city, gym_name, date_and_time, training_length, training_plans} = req.body;
+    // let creator_id = 1;
+    // let city = "poznan";
+    // let gym_name = "gym_name";
+    // let date_and_time = "2023-11-02 11:22:01";
+    // let training_length = "training_length";
+    // let training_plans = "training_plans";
+    pool.query(
+        `INSERT INTO events ( creator_id, city, gym_name, date_and_time, training_length, training_plans)
+                        VALUES ($1, $2, $3, $4, $5, $6)`,
+            [creator_id, city, gym_name, date_and_time, training_length, training_plans],
+            (err, results) => {
+                if (err) {
+                    console.log(err);
+                    throw err;
+                }
+                console.log(results.rows);
+            })
+})
 
 app.listen(PORT, ()=>{
     console.log(`server running port ${PORT}`);
